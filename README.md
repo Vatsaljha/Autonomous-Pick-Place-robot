@@ -114,6 +114,10 @@ source ~/turtlebot3_ws/install/setup.bash
 
 Start the **TurtleBot3 Home Service Challenge Gazebo world using the working launch command for your installation**.
 
+```bash
+ros2 launch turtlebot3_manipulation_gazebo turtlebot3_home_service_challenge.launch.py
+```
+
 ### What Terminal 1 does
 
 Gazebo provides the simulated environment containing:
