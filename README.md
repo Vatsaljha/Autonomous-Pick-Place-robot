@@ -147,8 +147,9 @@ Gazebo also publishes the sensor information used by SLAM, Nav2, and the custom 
 source /opt/ros/humble/setup.bash
 source ~/turtlebot3_ws/install/setup.bash
 ```
+```bash
 ros2 launch slam_toolbox online_async_launch.py use_sim_time:=True
-
+```
 
 ### What Terminal 2 does
 
