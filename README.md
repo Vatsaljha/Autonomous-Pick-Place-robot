@@ -201,6 +201,7 @@ Nav2 is used for global navigation. The camera-based controller handles the prec
 ```bash
 source /opt/ros/humble/setup.bash
 source ~/turtlebot3_ws/install/setup.bash
+
 ```bash
 ros2 run custom_aruco_detector aruco_detector --ros-args -p target_id:=7
 ```
@@ -242,6 +243,7 @@ Start the image viewer:
 ```bash
 source /opt/ros/humble/setup.bash
 source ~/turtlebot3_ws/install/setup.bash
+```
 
 ```bash
 ros2 run rqt_image_view rqt_image_view
@@ -271,6 +273,7 @@ The debug image is useful for confirming that ID 7 is correctly detected before 
 ```bash
 source /opt/ros/humble/setup.bash
 source ~/turtlebot3_ws/install/setup.bash
+```
 
 ```bash
 ros2 run pick_place_mission mission_manager
