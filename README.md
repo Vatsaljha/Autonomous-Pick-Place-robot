@@ -116,9 +116,9 @@ Start the **TurtleBot3 Home Service Challenge Gazebo world using the working lau
 
 ```bash
 git clone -b humble https://github.com/ROBOTIS-GIT/turtlebot3_home_service_challenge.git
-```bash
+```
 cd ~/turtlebot3_ws && colcon build --symlink-install
-```bash
+```
 ros2 launch turtlebot3_manipulation_gazebo turtlebot3_home_service_challenge.launch.py
 ```
 
@@ -144,8 +144,7 @@ Gazebo also publishes the sensor information used by SLAM, Nav2, and the custom 
 ```bash
 source /opt/ros/humble/setup.bash
 source ~/turtlebot3_ws/install/setup.bash
-
-```bash
+```
 ros2 launch slam_toolbox online_async_launch.py use_sim_time:=True
 
 
