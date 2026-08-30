@@ -1,4 +1,4 @@
-# TurtleBot3 Autonomous Home Service Challenge
+# TurtleBot3 Autonomous pick-and-place robot
 
 ## Overview
 
