@@ -6,6 +6,19 @@ A custom ROS 2 Humble implementation of an autonomous TurtleBot3 Home Service Ch
 
 The project uses a TurtleBot3 Waffle Pi equipped with a Pi Camera and OpenMANIPULATOR-X.
 
+## Key Features
+
+- Autonomous navigation using SLAM and Nav2
+- Custom ArUco detection using OpenCV
+- Target-specific marker identification (ID 7)
+- Camera-based visual target centering
+- Straight-line visual final approach
+- LiDAR-based collision protection
+- OpenMANIPULATOR-X joint trajectory control
+- Autonomous gripper open/close control
+- Autonomous object pickup and lift
+- Nav2-based return-to-home navigation
+
 ## Screenshots
 
 ### Gazebo Simulation
@@ -23,6 +36,10 @@ The project uses a TurtleBot3 Waffle Pi equipped with a Pi Camera and OpenMANIPU
 ### Autonomous Pick and Return
 
 ![Autonomous Pick and Return](screenshots/autonomous_pick_place.png)
+
+### Project Architecture
+
+![Project Architecture] (screenshots/architecture.png)
 
 ### Main Technologies
 
@@ -83,3 +100,22 @@ Nav2 return home
   v
 Mission complete
 
+## Results
+
+The implemented system successfully demonstrates:
+
+- Autonomous navigation to the pickup area
+- Detection of the required ArUco marker
+- Target centering using camera feedback
+- Close-range approach to the marker
+- Arm positioning for pickup
+- Gripper open/close operation
+- Object lifting
+- Autonomous return to the home position
+
+## Current Limitations
+
+- The implementation is currently validated in Gazebo Classic simulation.
+- The mission uses a predefined target marker ID (ID 7).
+- Pickup and placement depend on the simulated object's collision/contact behavior.
+- The system has been tuned for the current Gazebo challenge environment.
