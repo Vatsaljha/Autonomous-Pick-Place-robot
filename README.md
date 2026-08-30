@@ -94,8 +94,6 @@ The system connects perception, mapping, navigation, mission control, and manipu
 
 The project is operated using multiple terminals. Each terminal runs a different part of the robotic system.
 
-> The exact Gazebo and Nav2 launch files depend on the working TurtleBot3 Home Service Challenge setup used for this project.
-
 ---
 
 ## Terminal 1 - Start Gazebo
