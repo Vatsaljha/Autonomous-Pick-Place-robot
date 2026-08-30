@@ -37,7 +37,7 @@ A ROS 2 Humble autonomous pick-and-place robot using TurtleBot3 Waffle Pi, SLAM,
 
 ### Project Architecture
 
-![Project Architecture] (screenshots/architecture.png)
+![Project Architecture](screenshots/architecture.png)
 
 ### Main Technologies
 
@@ -97,6 +97,7 @@ Nav2 return home
   |
   v
 Mission complete
+
 
 ## Results
 
