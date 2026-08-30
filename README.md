@@ -44,8 +44,6 @@ The current system can:
 
 ## Project Architecture
 
-![Project Architecture](screenshots/architecture.png)
-
 The system connects simulation, perception, mapping, navigation, mission control, and manipulation.
 
 ```text
