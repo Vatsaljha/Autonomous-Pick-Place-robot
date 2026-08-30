@@ -117,6 +117,7 @@ Start the **TurtleBot3 Home Service Challenge Gazebo world using the working lau
 ```bash
 git clone -b humble https://github.com/ROBOTIS-GIT/turtlebot3_home_service_challenge.git
 ```
+```bash
 cd ~/turtlebot3_ws && colcon build --symlink-install
 ```
 ros2 launch turtlebot3_manipulation_gazebo turtlebot3_home_service_challenge.launch.py
