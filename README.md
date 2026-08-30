@@ -99,7 +99,7 @@ Nav2 return home
 Mission complete
 
 
-## Results
+Results
 
 The implemented system successfully demonstrates:
 
@@ -112,7 +112,7 @@ The implemented system successfully demonstrates:
 - Object lifting
 - Autonomous return to the home position
 
-## Current Limitations
+Current Limitations
 
 - The implementation is currently validated in Gazebo Classic simulation.
 - The mission uses a predefined target marker ID (ID 7).
