@@ -168,6 +168,9 @@ source ~/turtlebot3_ws/install/setup.bash
 ```
 
 Start the **working Nav2 launch command used in the Home Service Challenge simulation**.
+```bash
+ros2 launch nav2_bringup navigation_launch.py use_sim_time:=True
+```
 
 ### What Terminal 3 does
 
@@ -192,7 +195,7 @@ Nav2 is used for global navigation. The camera-based controller handles the prec
 source /opt/ros/humble/setup.bash
 source ~/turtlebot3_ws/install/setup.bash
 
-ros2 run custom_aruco_detector aruco_detector
+ros2 run custom_aruco_detector aruco_detector --ros-args -p target_id:=7
 ```
 
 ### What Terminal 4 does
@@ -233,9 +236,8 @@ Start the image viewer:
 source /opt/ros/humble/setup.bash
 source ~/turtlebot3_ws/install/setup.bash
 
-rqt_image_view
+ros2 run rqt_image_view rqt_image_view
 ```
-
 Select:
 
 ```text
