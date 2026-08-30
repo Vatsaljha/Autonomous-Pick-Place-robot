@@ -2,41 +2,43 @@
 
 A ROS 2 Humble autonomous pick-and-place robot using TurtleBot3 Waffle Pi, SLAM, Nav2, custom ArUco vision, and OpenMANIPULATOR-X in Gazebo Classic.
 
----
-
 ## Overview
 
-This project implements an autonomous mobile manipulation system in simulation.
+This project is a custom autonomous mobile-manipulation implementation built on the **TurtleBot3 Home Service Challenge environment**.
 
-The robot can:
+The robot uses the Home Service Challenge Gazebo world and adds a custom perception and mission-control pipeline for autonomous pick-and-place.
+
+The current system can:
 
 - Navigate autonomously using SLAM and Nav2
 - Detect ArUco markers using a custom OpenCV detector
-- Identify the required target marker (ID 7)
+- Select the required target marker, ID 7
 - Center the robot with respect to the target
-- Perform a close-range visual approach
-- Open the gripper
-- Move the OpenMANIPULATOR-X to the pickup position
-- Close the gripper
+- Perform a straight-line final visual approach
+- Stop at a calibrated pickup distance
+- Open and close the gripper automatically
+- Move the OpenMANIPULATOR-X to the pickup pose
 - Lift the object
 - Return to the home position using Nav2
-
-The complete system is implemented and tested in Gazebo Classic using ROS 2 Humble.
 
 ---
 
 ## Key Features
 
-- Autonomous navigation using SLAM and Nav2
-- Custom ArUco detection using OpenCV
-- Target-specific marker identification (ID 7)
-- Camera-based visual target centering
-- Straight-line visual final approach
-- LiDAR-based collision protection
-- OpenMANIPULATOR-X joint trajectory control
-- Autonomous gripper open/close control
-- Autonomous object pickup and lift
-- Nav2-based return-to-home navigation
+- ROS 2 Humble
+- Gazebo Classic
+- TurtleBot3 Waffle Pi
+- OpenMANIPULATOR-X
+- SLAM Toolbox
+- Nav2
+- LiDAR obstacle protection
+- Custom ArUco detection
+- Target-specific ArUco ID 7
+- Camera-based target centering
+- Straight-line visual approach
+- Automatic arm control
+- Automatic gripper control
+- Autonomous pick, lift, and return
 
 ---
 
@@ -44,7 +46,7 @@ The complete system is implemented and tested in Gazebo Classic using ROS 2 Humb
 
 ![Project Architecture](screenshots/architecture.png)
 
-The system connects perception, mapping, navigation, mission control, and manipulation.
+The system connects simulation, perception, mapping, navigation, mission control, and manipulation.
 
 ```text
                          Gazebo Classic
@@ -92,28 +94,31 @@ The system connects perception, mapping, navigation, mission control, and manipu
 
 # How to Run the Project
 
-The project is operated using multiple terminals. Each terminal runs a different part of the robotic system.
+The project is operated using multiple terminals because each major ROS 2 component runs as a separate node or stack.
+
+The exact Gazebo and Nav2 launch files depend on the TurtleBot3 Home Service Challenge setup installed in the workspace. The commands below describe the working pipeline and the commands used for the custom nodes.
 
 ---
 
-## Terminal 1 - Start Gazebo
+## Terminal 1 - Start the Home Service Challenge Gazebo World
 
-Source ROS 2 and the workspace:
+Source ROS 2:
 
 ```bash
 source /opt/ros/humble/setup.bash
+```
+
+Source the workspace:
+
+```bash
 source ~/turtlebot3_ws/install/setup.bash
 ```
 
-Start the working Gazebo world:
-
-```bash
-ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
-```
+Start the **TurtleBot3 Home Service Challenge Gazebo world using the working launch command for your installation**.
 
 ### What Terminal 1 does
 
-Gazebo provides the complete simulation environment, including:
+Gazebo provides the simulated environment containing:
 
 - TurtleBot3 Waffle Pi
 - OpenMANIPULATOR-X
@@ -124,7 +129,7 @@ Gazebo provides the complete simulation environment, including:
 - Pick object
 - Simulated physics
 
-Gazebo also publishes the sensor data used by SLAM, Nav2, and the custom perception nodes.
+Gazebo also publishes the sensor information used by SLAM, Nav2, and the custom vision system.
 
 ---
 
@@ -139,43 +144,43 @@ ros2 launch slam_toolbox online_async_launch.py use_sim_time:=True
 
 ### What Terminal 2 does
 
-SLAM Toolbox processes the LiDAR data from:
+SLAM Toolbox receives LiDAR data from:
 
 ```text
 /scan
 ```
 
-It creates a map of the environment and maintains the robot's pose estimate.
+It builds the map and provides localization information.
 
-The map and localization information are used by Nav2 for autonomous navigation.
+The resulting map is used by Nav2 for autonomous navigation.
 
 ---
 
 ## Terminal 3 - Start Nav2
 
-First source the ROS environment:
+Source the environments:
 
 ```bash
 source /opt/ros/humble/setup.bash
 source ~/turtlebot3_ws/install/setup.bash
 ```
 
-Start the working Nav2 launch command used by the simulation.
+Start the **working Nav2 launch command used in the Home Service Challenge simulation**.
 
 ### What Terminal 3 does
 
-Nav2 is responsible for long-distance autonomous navigation.
+Nav2 is responsible for long-distance navigation.
 
 It:
 
 - Uses the SLAM map
-- Plans collision-free paths
-- Uses LiDAR-based costmaps
-- Avoids obstacles
-- Navigates toward the pickup area
+- Plans a path
+- Uses costmaps for obstacle avoidance
+- Uses LiDAR observations
+- Moves the robot to the pickup area
 - Returns the robot to the home position
 
-The final approach to ArUco ID 7 is handled by the custom mission controller.
+Nav2 is used for global navigation. The camera-based controller handles the precise final approach to ArUco ID 7.
 
 ---
 
@@ -196,29 +201,29 @@ The custom detector subscribes to:
 /pi_camera/image_raw
 ```
 
-and reads camera calibration from:
+Camera calibration is read from:
 
 ```text
 /pi_camera/camera_info
 ```
 
-The detector uses OpenCV ArUco detection with:
+The detector uses the OpenCV ArUco dictionary:
 
 ```text
 DICT_5X5_50
 ```
 
-The environment can contain multiple markers, but the autonomous mission specifically uses:
+The environment can contain several markers, but the mission specifically selects:
 
 ```text
 Target ID = 7
 ```
 
-The detector identifies the marker and estimates its position relative to the camera.
+The detector also publishes debug information used during the final approach.
 
 ---
 
-## Terminal 5 - View the Debug Camera Image
+## Terminal 5 - View the ArUco Debug Image
 
 Start the image viewer:
 
@@ -235,20 +240,16 @@ Select:
 /aruco/debug_image
 ```
 
-The debug image can show:
+The debug image shows the detected target and its estimated position.
 
-- ArUco marker outline
-- Marker ID
-- Pose axes
-- Target X position
-- Target Z distance
-
-The important measurements are:
+Important values are:
 
 ```text
-X = horizontal position of the target
+X = horizontal target position
 Z = forward distance to the target
 ```
+
+The debug image is useful for confirming that ID 7 is correctly detected before the robot performs the final approach.
 
 ---
 
@@ -263,26 +264,30 @@ ros2 run pick_place_mission mission_manager
 
 ### What Terminal 6 does
 
-The mission manager coordinates the complete autonomous workflow:
+The mission manager coordinates the complete autonomous sequence:
 
 ```text
 Nav2
   |
+Pickup area
+  |
 ArUco ID 7
   |
-Visual centering
+Target centering
   |
-Final approach
+Final visual approach
   |
-Gripper open
+Gripper OPEN
   |
-Arm positioning
+Arm PICK
   |
-Gripper close
+Gripper CLOSE
   |
-Arm lift
+Arm LIFT
   |
-Nav2 return home
+Nav2 HOME
+  |
+Mission COMPLETE
 ```
 
 ---
@@ -337,17 +342,29 @@ Mission complete
 
 ## 1. Navigate to the Pickup Area
 
-The robot first uses SLAM and Nav2 to navigate from its starting position to the predefined pickup area.
+The robot first uses SLAM and Nav2.
 
-The navigation stage handles the large-scale movement through the environment.
+Nav2 performs the large-scale movement from the home area toward the pickup area.
 
-The robot does not use random marker searching while Nav2 is operating.
+The robot uses:
+
+```text
+SLAM map
++
+Localization
++
+Nav2 planner
++
+LiDAR costmaps
+```
+
+to navigate through the environment.
 
 ---
 
 ## 2. Detect ArUco Marker ID 7
 
-After reaching the pickup area, the Pi Camera observes the ArUco markers.
+After reaching the pickup area, the Pi Camera observes the markers.
 
 The custom detector processes:
 
@@ -355,9 +372,9 @@ The custom detector processes:
 /pi_camera/image_raw
 ```
 
-and detects the markers using OpenCV.
+and detects the ArUco markers.
 
-The environment can contain multiple markers, but the mission manager selects:
+Although multiple markers can be visible, the mission manager selects:
 
 ```text
 ID 7
@@ -365,26 +382,28 @@ ID 7
 
 as the pickup target.
 
+This prevents other markers from becoming the manipulation target.
+
 ---
 
-## 3. Estimate Target Position
+## 3. Estimate the Target Position
 
 The detector estimates the target position relative to the camera.
 
-The mission controller uses:
+The two important values are:
 
 ```text
-X = horizontal target position
-Z = forward target distance
+X = horizontal position
+Z = forward distance
 ```
 
-The controller uses X to determine whether the target is left or right of the robot's center line.
+The controller uses X for horizontal alignment and Z for the final approach distance.
 
 ---
 
 ## 4. Center the Target
 
-Before moving forward, the robot first centers ID 7.
+The robot first aligns itself with ID 7.
 
 The horizontal error is reduced toward:
 
@@ -392,38 +411,40 @@ The horizontal error is reduced toward:
 X -> 0
 ```
 
-Once the marker is sufficiently centered, the robot stops rotating and proceeds to the forward approach.
+The robot rotates only as necessary to center the marker.
 
-This prevents the robot from approaching the marker diagonally.
+When the target is centered, the robot stops rotating and proceeds with the forward approach.
+
+This avoids the unwanted behavior of continuing to rotate after the target has already been found.
 
 ---
 
 ## 5. Straight-Line Final Approach
 
-After the target is centered, the robot moves forward.
+After centering the marker, the robot moves forward.
 
-During the final approach:
+The intended final-approach motion is:
 
 ```text
 linear velocity > 0
 angular velocity = 0
 ```
 
-The camera continuously estimates the marker distance.
+The camera continuously measures the marker distance.
 
-The experimentally calibrated final visual stopping distance is:
+The current calibrated stopping distance is:
 
 ```text
 Z = 0.15 m
 ```
 
-At this distance, the mobile base stops and the manipulation sequence begins.
+When this distance is reached, the mobile base stops.
 
 ---
 
-## 6. LiDAR Safety Protection
+## 6. LiDAR Safety
 
-LiDAR provides an independent obstacle-protection layer.
+LiDAR provides an additional obstacle-protection layer.
 
 The navigation costmaps use:
 
@@ -431,37 +452,47 @@ The navigation costmaps use:
 /scan
 ```
 
-The final visual controller also checks the forward LiDAR region.
+to detect obstacles.
 
-The robot stops if a persistent unsafe obstacle condition is detected.
+The final approach also uses the forward LiDAR region as a safety condition.
 
-This allows the camera to provide precision while LiDAR provides collision protection.
+The concept is:
+
+```text
+Camera
+  |
+  +--> Accurate target positioning
+
+LiDAR
+  |
+  +--> Collision protection
+```
 
 ---
 
 ## 7. Open the Gripper
 
-Once the final approach is complete, the mobile base remains stationary.
+After the mobile base reaches the pickup position, the robot remains stationary.
 
-The gripper is controlled using:
+The gripper opens through:
 
 ```text
 /gripper_controller/gripper_cmd
 ```
 
-The gripper opens before the arm moves into the pickup configuration.
+The open command creates space for the object before the arm moves into the pickup configuration.
 
 ---
 
 ## 8. Move the OpenMANIPULATOR-X
 
-The arm is controlled using:
+The arm is controlled through:
 
 ```text
 /arm_controller/follow_joint_trajectory
 ```
 
-The calibrated pickup configuration is:
+The calibrated pickup joint configuration is:
 
 ```text
 joint1 = 0.0
@@ -470,7 +501,7 @@ joint3 = -0.95
 joint4 = 0.0
 ```
 
-The arm moves to this configuration using a joint trajectory.
+The arm moves to this pose using a joint trajectory.
 
 ---
 
@@ -482,31 +513,33 @@ After the arm reaches the pickup position:
 Gripper OPEN
       |
       v
-Arm moves to pickup pose
+Arm reaches pickup pose
       |
       v
 Gripper CLOSE
 ```
 
-The robot then prepares to lift the object.
+The object is then held by the simulated gripper.
 
 ---
 
 ## 10. Lift the Object
 
-After closing the gripper, the arm moves to a higher configuration.
+After the gripper closes, the arm moves to the calibrated lift configuration.
 
-This creates clearance between the object and the pickup surface before the mobile base starts moving again.
+The mobile base remains stopped while the object is being lifted.
 
-The mobile base remains stationary during manipulation.
+The purpose is to provide clearance between the object and the pickup structure.
 
 ---
 
-## 11. Return to the Home Position
+## 11. Return to Home
 
-After the object is lifted, the mission manager sends a new Nav2 goal to the predefined home position.
+After the object is lifted, the mission manager starts the return navigation.
 
-Current home pose:
+Nav2 is used again to move from the pickup area to the home position.
+
+The home pose currently used by the mission is approximately:
 
 ```text
 x   = -0.007 m
@@ -514,60 +547,55 @@ y   =  0.001 m
 yaw =  0.039 rad
 ```
 
-Nav2 then handles the return navigation using the map, localization, and obstacle avoidance.
-
-<<<<<<< HEAD
-Results
-=======
-The return journey does not require manual teleoperation.
+The return is autonomous and does not require teleoperation.
 
 ---
 
 ## 12. Mission Completion
 
-The complete workflow is:
+The complete autonomous workflow is:
 
 ```text
-Gazebo
-  |
-  v
-SLAM
-  |
-  v
-Nav2
-  |
-  v
-Pickup station
-  |
-  v
-ArUco ID 7
-  |
-  v
-Target centering
-  |
-  v
-Final approach
-  |
-  v
-Z = 0.15 m
-  |
-  v
-Gripper OPEN
-  |
-  v
-Arm PICK
-  |
-  v
-Gripper CLOSE
-  |
-  v
-Arm LIFT
-  |
-  v
-Nav2 HOME
-  |
-  v
-MISSION COMPLETE
+Gazebo Home Service Challenge World
+              |
+              v
+            SLAM
+              |
+              v
+            Nav2
+              |
+              v
+       Pickup Area
+              |
+              v
+        ArUco ID 7
+              |
+              v
+       Center Target
+              |
+              v
+      Visual Approach
+              |
+              v
+        Z = 0.15 m
+              |
+              v
+       Gripper OPEN
+              |
+              v
+          Arm PICK
+              |
+              v
+      Gripper CLOSE
+              |
+              v
+          Arm LIFT
+              |
+              v
+        Nav2 HOME
+              |
+              v
+      MISSION COMPLETE
 ```
 
 ---
@@ -593,9 +621,10 @@ Responsibilities:
 - Subscribe to camera images
 - Detect ArUco markers
 - Identify marker IDs
-- Estimate marker pose
-- Generate debug images
-- Provide target position information
+- Estimate marker position
+- Publish marker information
+- Publish the debug image
+- Support target tracking for ID 7
 
 ---
 
@@ -616,9 +645,9 @@ src/pick_place_mission/pick_place_mission/mission_manager.py
 Responsibilities:
 
 - Coordinate Nav2
-- Select target marker ID 7
-- Center the target
-- Perform final visual approach
+- Select marker ID 7
+- Perform visual target centering
+- Perform the final visual approach
 - Monitor LiDAR safety
 - Control the OpenMANIPULATOR-X
 - Control the gripper
@@ -677,27 +706,39 @@ Responsibilities:
 
 # Configuration
 
-The mission configuration is stored in:
+The main mission configuration is stored in:
 
 ```text
 config/pick_config.yaml
 ```
 
-Current configuration:
+Current target:
 
 ```yaml
 marker_id: 7
+```
 
+Current pickup navigation pose:
+
+```yaml
 pick_pose:
   x: 0.800
   y: -1.067
   yaw: -1.581
+```
 
+Current home pose:
+
+```yaml
 home_pose:
   x: -0.007
   y: 0.001
   yaw: 0.039
+```
 
+Current arm pickup pose:
+
+```yaml
 arm_pose:
   joint1: 0.0
   joint2: 0.95
@@ -705,7 +746,7 @@ arm_pose:
   joint4: 0.0
 ```
 
-Final visual approach distance:
+Final visual stopping distance:
 
 ```text
 Z = 0.15 m
@@ -717,7 +758,7 @@ Z = 0.15 m
 
 These commands were used during development to verify individual components.
 
-## Camera
+## Check Camera
 
 ```bash
 ros2 topic info /pi_camera/image_raw -v
@@ -727,7 +768,7 @@ ros2 topic info /pi_camera/image_raw -v
 ros2 topic echo /pi_camera/camera_info --once
 ```
 
-## LiDAR
+## Check LiDAR
 
 ```bash
 ros2 topic info /scan -v
@@ -737,13 +778,13 @@ ros2 topic info /scan -v
 ros2 topic hz /scan
 ```
 
-## Controllers
+## Check Controllers
 
 ```bash
 ros2 control list_controllers
 ```
 
-Expected controllers include:
+Expected active controllers include:
 
 ```text
 joint_state_broadcaster
@@ -752,7 +793,7 @@ imu_broadcaster
 arm_controller
 ```
 
-## Arm Action
+## Check Arm Action
 
 ```bash
 ros2 action list | grep arm
@@ -767,7 +808,9 @@ Expected:
 ## Test Arm Pickup Pose
 
 ```bash
-ros2 action send_goal /arm_controller/follow_joint_trajectory control_msgs/action/FollowJointTrajectory "{trajectory: {joint_names: ['joint1','joint2','joint3','joint4'], points: [{positions: [0.0,0.95,-0.95,0.0], time_from_start: {sec: 4}}]}}"
+ros2 action send_goal /arm_controller/follow_joint_trajectory \
+control_msgs/action/FollowJointTrajectory \
+"{trajectory: {joint_names: ['joint1','joint2','joint3','joint4'], points: [{positions: [0.0,0.95,-0.95,0.0], time_from_start: {sec: 4}}]}}"
 ```
 
 ## Check End-Effector Position
@@ -780,14 +823,6 @@ ros2 run tf2_ros tf2_echo base_link end_effector_link
 
 ```bash
 ros2 run tf2_ros tf2_echo map base_link
-```
-
-The measured home pose used by the mission is approximately:
-
-```text
-x   = -0.007
-y   =  0.001
-yaw =  0.039
 ```
 
 ---
@@ -810,14 +845,9 @@ yaw =  0.039
 
 ![Autonomous Pick and Return](screenshots/autonomous_pick_place.png)
 
-## Project Architecture
-
-![Project Architecture](screenshots/architecture.png)
-
 ---
 
 # Results
->>>>>>> 23b7fc1 (Update README with complete project documentation)
 
 The implemented system successfully demonstrates:
 
@@ -825,52 +855,44 @@ The implemented system successfully demonstrates:
 - SLAM-based mapping and localization
 - Nav2 path planning
 - LiDAR-based obstacle protection
-- Custom ArUco marker detection
-- Target-specific marker identification
+- Custom ArUco detection
+- Target-specific marker selection using ID 7
 - Camera-based target centering
 - Straight-line final approach
-- Close-range positioning
+- Close-range pickup positioning
 - OpenMANIPULATOR-X arm positioning
-- Gripper open and close operation
+- Automatic gripper open/close operation
 - Object pickup and lifting
 - Autonomous return to the home position
 
-<<<<<<< HEAD
-Current Limitations
-
-- The implementation is currently validated in Gazebo Classic simulation.
-- The mission uses a predefined target marker ID (ID 7).
-- Pickup and placement depend on the simulated object's collision/contact behavior.
-- The system has been tuned for the current Gazebo challenge environment.
-=======
 ---
 
 # Difference from the Official Home Service Challenge
 
-This project is based on the TurtleBot3 Home Service Challenge concept but uses a custom perception and mission-control implementation.
+This project uses the **TurtleBot3 Home Service Challenge Gazebo world and core robotics environment**, but adds a custom autonomous perception and mission-control pipeline.
 
-Main differences include:
+The major custom parts are:
 
 - Custom ArUco detector
-- Target-specific marker ID 7 selection
-- Camera-based X/Z target estimation
-- Custom visual target-centering logic
-- Straight-line visual final approach
+- Target-specific selection of marker ID 7
+- Camera-based target X/Z estimation
+- Visual target-centering logic
+- Straight-line final visual approach
 - Custom ROS 2 mission manager
-- Direct arm trajectory control
-- Direct gripper action control
-- Nav2-based autonomous return
+- Direct OpenMANIPULATOR-X trajectory control
+- Direct gripper control
+- Automated Nav2 return-home orchestration
 
-The project follows the same general mobile-manipulation objective while implementing the perception and mission-control pipeline specifically for this Gazebo environment.
+The project therefore follows the same general home-service mobile-manipulation objective while implementing the perception and mission-control workflow specifically for this project.
 
 ---
 
 # Current Limitations
 
-- The implementation is validated in Gazebo Classic simulation.
-- The mission currently uses a predefined target marker ID (ID 7).
-- The system is tuned for the current Gazebo challenge environment.
-- Pickup and placement depend on the simulated object's collision and contact behavior.
+- The system is validated in Gazebo Classic simulation.
+- The current mission uses a predefined target marker ID (ID 7).
+- The system is tuned for the current TurtleBot3 Home Service Challenge environment.
+- Pickup and placement depend on simulated collision and contact behavior.
 - The current mission focuses on a single target object.
 
 ---
@@ -882,9 +904,9 @@ The project follows the same general mobile-manipulation objective while impleme
 - Multi-object pick-and-place missions
 - Improved grasp and release reliability
 - Navigation recovery behaviors
-- Improved manipulation planning
+- More robust manipulation planning
 - MoveIt-based manipulation planning
-- Deployment on a physical TurtleBot3 platform
+- Deployment on a physical TurtleBot3
 
 ---
 
@@ -943,4 +965,3 @@ https://github.com/Vatsaljha
 # License
 
 This project is released under the MIT License.
->>>>>>> 23b7fc1 (Update README with complete project documentation)
