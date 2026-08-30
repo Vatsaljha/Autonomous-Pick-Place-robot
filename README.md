@@ -120,6 +120,7 @@ git clone -b humble https://github.com/ROBOTIS-GIT/turtlebot3_home_service_chall
 ```bash
 cd ~/turtlebot3_ws && colcon build --symlink-install
 ```
+```bash
 ros2 launch turtlebot3_manipulation_gazebo turtlebot3_home_service_challenge.launch.py
 ```
 
