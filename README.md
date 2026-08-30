@@ -1,10 +1,8 @@
-# TurtleBot3 Autonomous Pick-and-Place Robot
+# Autonomous Pick-and-Place Robot
 
 ## Overview
 
-A custom ROS 2 Humble implementation of an autonomous TurtleBot3 Home Service Challenge in Gazebo Classic.
-
-The project uses a TurtleBot3 Waffle Pi equipped with a Pi Camera and OpenMANIPULATOR-X.
+A ROS 2 Humble autonomous pick-and-place robot using TurtleBot3 Waffle Pi, SLAM, Nav2, custom ArUco vision, and OpenMANIPULATOR-X in Gazebo Classic.
 
 ## Key Features
 
