@@ -1,0 +1,17 @@
+marker_id: 7
+
+pick_pose:
+  x: 0.800
+  y: -1.067
+  yaw: -1.581
+
+home_pose:
+  x: -0.007
+  y: 0.001
+  yaw: 0.039
+
+arm_pose:
+  joint1: 0.0
+  joint2: 0.95
+  joint3: -0.95
+  joint4: 0.0

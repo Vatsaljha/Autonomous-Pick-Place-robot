@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package format="3">
+
+  <name>pick_place_mission</name>
+
+  <version>0.0.0</version>
+
+  <description>
+    Autonomous TurtleBot3 Waffle Pi pick and place mission
+    using SLAM, Nav2, ArUco ID 7 and OpenMANIPULATOR-X.
+  </description>
+
+  <maintainer email="vatsal@example.com">vatsal</maintainer>
+
+  <license>Apache-2.0</license>
+
+  <depend>rclpy</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav2_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>control_msgs</depend>
+  <depend>trajectory_msgs</depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+
+</package>
