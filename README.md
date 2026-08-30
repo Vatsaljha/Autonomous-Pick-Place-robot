@@ -290,52 +290,6 @@ Mission COMPLETE
 
 ---
 
-# Autonomous Mission
-
-The robot performs the following sequence:
-
-```text
-Home
-  |
-  v
-Nav2 navigation
-  |
-  v
-Pickup station
-  |
-  v
-Detect ArUco ID 7
-  |
-  v
-Center target
-  |
-  v
-Straight visual approach
-  |
-  v
-Stop at Z = 0.15 m
-  |
-  v
-Open gripper
-  |
-  v
-Move arm to pick position
-  |
-  v
-Close gripper
-  |
-  v
-Lift object
-  |
-  v
-Nav2 return home
-  |
-  v
-Mission complete
-```
-
----
-
 # How the Robot Works
 
 ## 1. Navigate to the Pickup Area
