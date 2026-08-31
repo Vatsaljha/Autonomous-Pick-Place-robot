@@ -507,55 +507,6 @@ The return is autonomous and does not require teleoperation.
 
 ---
 
-## 12. Mission Completion
-
-The complete autonomous workflow is:
-
-```text
-Gazebo Home Service Challenge World
-              |
-              v
-            SLAM
-              |
-              v
-            Nav2
-              |
-              v
-       Pickup Area
-              |
-              v
-        ArUco ID 7
-              |
-              v
-       Center Target
-              |
-              v
-      Visual Approach
-              |
-              v
-        Z = 0.15 m
-              |
-              v
-       Gripper OPEN
-              |
-              v
-          Arm PICK
-              |
-              v
-      Gripper CLOSE
-              |
-              v
-          Arm LIFT
-              |
-              v
-        Nav2 HOME
-              |
-              v
-      MISSION COMPLETE
-```
-
----
-
 # Custom ROS 2 Packages
 
 ## custom_aruco_detector
