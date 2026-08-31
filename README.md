@@ -74,22 +74,6 @@ The system connects simulation, perception, mapping, navigation, mission control
 
 ---
 
-## Main Technologies
-
-- Ubuntu 22.04
-- ROS 2 Humble
-- Gazebo Classic
-- TurtleBot3 Waffle Pi
-- OpenMANIPULATOR-X
-- SLAM Toolbox
-- Nav2
-- LiDAR
-- OpenCV ArUco
-- Python
-- ROS 2 Actions
-
----
-
 # How to Run the Project
 
 The project is operated using multiple terminals because each major ROS 2 component runs as a separate node or stack.
